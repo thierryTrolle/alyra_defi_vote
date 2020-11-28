@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable,Subject,from } from 'rxjs';
+import { Observable, Subject, from } from 'rxjs';
 declare let require: any;
 const Web3 = require('web3');
 const contract = require('@truffle/contract');
@@ -31,7 +31,6 @@ export class Web3Service {
       });
     } else {
       console.log('No web3? You should consider trying MetaMask!');
-
       // Hack to provide backwards compatibility for Truffle, which uses web3js 0.20.x
       Web3.providers.HttpProvider.prototype.sendAsync = Web3.providers.HttpProvider.prototype.send;
       // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
@@ -41,20 +40,32 @@ export class Web3Service {
     setInterval(() => this.refreshAccounts(), 600);
   }
 
+  /**
+   * Transform artifact json to an usable instance
+   * if web3 not loading again, try to wait 
+   * @param artifacts 
+   */
   public async artifactsToContract(artifacts) {
     if (!this.web3) {
+      console.log("web3 doesn't loaded !");
       const delay = new Promise(resolve => setTimeout(resolve, 100));
       await delay;
       return await this.artifactsToContract(artifacts);
     }
-
     const contractAbstraction = contract(artifacts);
     contractAbstraction.setProvider(this.web3.currentProvider);
     return contractAbstraction;
-
   }
 
-  public getBalance(address: String):Observable<any> {
+  // public getDeployedInstance(artifacts):Observable<any>{
+  //   from(this.artifactsToContract(artifacts)).subscribe(
+  //     contractAbstract => { 
+  //       return from(contractAbstract); 
+  //     }
+  //   );
+  // }
+
+  public getBalance(address: String): Observable<any> {
     return from(this.web3.eth.getBalance(address));
   }
 

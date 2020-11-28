@@ -36,7 +36,7 @@ contract Voting is Ownable{
         VotesTallied
     }
     
-    WorkflowStatus private _workflowState;
+    WorkflowStatus public _workflowState;
     
     mapping(address=>Voter)  public _whiteList;
     
