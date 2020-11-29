@@ -7,6 +7,9 @@ import { TestWeb3Component } from './test-web3/test-web3.component';
 import { Web3Service } from './service/web3.service';
 import { Votingweb3Service } from './service/votingweb3.service';
 import { AdminComponent } from './admin/admin.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatButtonModule, MatCardModule, MatDividerModule, MatFormFieldModule, MatGridListModule, MatInputModule, MatListModule } from '@angular/material';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,7 +19,17 @@ import { AdminComponent } from './admin/admin.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatGridListModule,
+    MatDividerModule,
+    MatListModule,
+    MatFormFieldModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [Web3Service,Votingweb3Service],
   bootstrap: [AppComponent]

@@ -1,5 +1,15 @@
-<p>test-web3 works!</p>
-<p>Account Address: {{accountAddress}}</p>
-<p>balance : {{balance}}</p>
-<button class="btn btn-outline-dark btn-sm" (click)="click()">Check1</button>
-<button class="btn btn-outline-dark btn-sm" (click)="click2()">Check2</button>
+<mat-grid-list cols="3">
+    <mat-grid-tile> &nbsp; </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+            <h1>Ethereum Voting System</h1>
+
+            <p style="text-align:right;"><strong>Address: </strong><button mat-raised-button>{{accountAddress}}</button></p>
+            <p  style="text-align:right;"><strong>balance :</strong> <button mat-raised-button>{{balance}} ETH</button></p>
+            <button class="btn btn-outline-dark btn-sm" (click)="click()">Check1</button>
+            <button class="btn btn-outline-dark btn-sm" (click)="click2()">Check2</button>
+
+        </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile> &nbsp;</mat-grid-tile>
+</mat-grid-list>

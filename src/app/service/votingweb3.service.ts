@@ -12,12 +12,15 @@ export class Votingweb3Service {
 
   private votingInstance:any;
 
+  private votingState:Observable<any>;
+
   constructor(private web3Service: Web3Service) {
-    console.log('web 3 state: ' + web3Service);
+    console.log('web3 state: ' + web3Service);
     web3Service.artifactsToContract(votingArtifact).then(
       abstract => {
         abstract.deployed().then(
           deployed=>{
+            //affecte l'instance voting
             this.votingInstance=deployed;
           }
         )
@@ -25,8 +28,18 @@ export class Votingweb3Service {
     );
   }
 
-  addToWhiteList(address:string):Observable<any>{
-    return from(this.votingInstance.addIntoWhiteList(address,false));
+  // private refreshVotingState(){
+  //   if (!this.votingInstance) {
+  //     console.log("this.votingInstance doesn't loaded !");
+  //     setTimeout(() => {  console.log("Waiting refreshVotingState()"); }, 100);
+  //     return this.refreshVotingState();
+  //   }
+  //   this.votingState=from(this.votingInstance._workflowState.call());
+  //   console.log("refresh voting state");
+  // }
+
+  addToWhiteList(address):Observable<any>{
+    return from(this.votingInstance.addIntoWhiteList(address,true));
   }
 
   getWorkflowState():Observable<any>{

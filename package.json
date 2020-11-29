@@ -27,6 +27,7 @@
     "@truffle/contract": "^4.0.33",
     "core-js": "2.5.7",
     "ethers": "^4.0.37",
+    "hammerjs": "^2.0.8",
     "node-sass": "4.12.0",
     "rxjs": "^6.5.3",
     "truffle-contract": "^4.0.31",

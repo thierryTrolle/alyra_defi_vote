@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, from } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+
 declare let require: any;
 const Web3 = require('web3');
 const contract = require('@truffle/contract');
@@ -22,6 +24,10 @@ export class Web3Service {
     });
   }
 
+  public getWeb3():any{
+    return this.web3;
+  }
+
   public bootstrapWeb3() {
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof window.ethereum !== 'undefined') {
@@ -37,7 +43,7 @@ export class Web3Service {
       this.web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
     }
 
-    setInterval(() => this.refreshAccounts(), 600);
+    setInterval(() => this.refreshAccounts(), 500);
   }
 
   /**
@@ -57,18 +63,33 @@ export class Web3Service {
     return contractAbstraction;
   }
 
-  // public getDeployedInstance(artifacts):Observable<any>{
-  //   from(this.artifactsToContract(artifacts)).subscribe(
-  //     contractAbstract => { 
-  //       return from(contractAbstract); 
-  //     }
-  //   );
-  // }
-
-  public getBalance(address: String): Observable<any> {
-    return from(this.web3.eth.getBalance(address));
+  public isAddress(address: string): boolean {
+    return this.web3.isAddress(address);
   }
 
+  /**
+   * DEPRECATED envoie un chiffre apres l'autre en asynchrone
+   * @param amount
+   */
+  public convertWeiToEth(amount: number): Observable<any> {
+    return from(this.web3.utils.fromWei(amount, 'ether'));
+  }
+
+  public getBalance(address: String): Observable<any> {
+
+    return from(this.web3.eth.getBalance(address));
+    // Return lettre par lettre !!!
+    // return from(this.web3.eth.getBalance(address)).pipe(
+    //   mergeMap( balanceW => {
+    //     console.log("balanceW:"+balanceW);
+    //     return this.web3.utils.fromWei(balanceW,'ether');
+    //   })
+    // )
+  }
+
+  /**
+   * refresh les comptes lors de changments metamask
+   */
   private async refreshAccounts() {
     const accs = await this.web3.eth.getAccounts();
     console.log('Refreshing accounts');
