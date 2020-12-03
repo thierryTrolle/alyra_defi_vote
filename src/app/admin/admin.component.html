@@ -2,7 +2,7 @@
     <mat-grid-tile> &nbsp; </mat-grid-tile>
     <mat-grid-tile>
         <mat-card>
-            <h1>Ethereum Voting System</h1>{{votingState}}
+            <h1>Ethereum Voting System</h1>
             <mat-list>
                 <mat-list-item>
                     <p style="text-align:right;"><strong>Address: </strong><button
@@ -14,20 +14,25 @@
                             ETH</button></p>
                 </mat-list-item>
                 <mat-divider></mat-divider>
+                <mat-list-item>
+                    <p style="text-align:right;"><strong>State: </strong><button
+                            mat-raised-button>{{votingState}}</button></p>
+                </mat-list-item>
+                <mat-divider></mat-divider>
             </mat-list>
             <!-- Admin etat register voter -->
-            <mat-list *ngIf="votingState==0">
+            <mat-list *ngIf="votingState==0 && isOwner()">
                 <br />
                 <mat-list-item>
                     <!-- <form class="example-form" style="width: 100%;"> -->
-                        <mat-form-field style="width: 60%;">
-                            <mat-label>Ethereum address</mat-label>
-                            <input matInput #message maxlength="40" placeholder="Ex. I need help with..." [(ngModel)]="address">
-                            <mat-hint align="start"><strong>Only ethereum address</strong> </mat-hint>
-                            <mat-hint align="end">{{message.value.length}} / 40</mat-hint>
-                        </mat-form-field>
-                        &nbsp;
-                        <button mat-stroked-button color="primary" (click)="addWhiteAddress()">Add to WhiteList</button>
+                    <mat-form-field style="width: 60%;">
+                        <mat-label>Ethereum address</mat-label>
+                        <input matInput #message maxlength="42" placeholder="Ex. I need help with..." [(ngModel)]="address">
+                        <mat-hint align="start"><strong>Only ethereum address</strong> </mat-hint>
+                        <mat-hint align="end">{{message.value.length}} / 42</mat-hint>
+                    </mat-form-field>
+                    &nbsp;
+                    <button mat-stroked-button color="primary" (click)="addWhiteAddress()">Add to WhiteList</button>
                     <!-- </form> -->
                 </mat-list-item>
                 <br />
@@ -37,6 +42,100 @@
                     <button mat-stroked-button color="primary" (click)="launchProposalSession()"> Launch Proposal Session</button>
                 </mat-list-item>
             </mat-list>
+
+            <!-- Admin etat register voter -->
+            <mat-list *ngIf="votingState==0 && !isOwner()">
+                <br />
+                <mat-list-item *ngIf="isWhiteListed">
+                    <div class="label">You are registered, please wait for admin start proposale session</div>
+                </mat-list-item>
+                <mat-list-item *ngIf="!isWhiteListed">
+                    <div class="label">You are not registered</div>
+                </mat-list-item>
+            </mat-list>
+
+
+            <mat-list *ngIf="votingState==1 && isOwner()">
+                <br />
+                <mat-list-item>
+                    <button mat-stroked-button color="primary" (click)="stopProposalSession()"> Stop Proposal Session</button>
+                </mat-list-item>
+            </mat-list>
+
+            <mat-list *ngIf="votingState==1 && !isOwner()">
+                <br />
+                <mat-list-item>
+                    <form class="example-form">
+                        <mat-form-field class="example-full-width" style="width: 60%;">
+                            <mat-label>Your proposal</mat-label>
+                            <input matInput #message maxlength="20" placeholder="Ex. I need help with..." [(ngModel)]="proposal" [ngModelOptions]="{standalone: true}">
+                            <mat-hint align="start"><strong>Don't disclose personal info</strong> </mat-hint>
+                            <mat-hint align="end">{{message.value.length}} / 20</mat-hint>
+                        </mat-form-field>
+                        &nbsp;
+                        <button mat-stroked-button color="primary" (click)="sendProposal()"> Send proposal</button>
+                    </form>
+                </mat-list-item>
+            </mat-list>
+            <!--session proposal finish-->
+            <mat-list *ngIf="votingState==2 && isOwner()">
+                <br />
+                <mat-list-item>
+                    <button mat-stroked-button color="primary" (click)="startVotingSession()"> Start voting session</button>
+                </mat-list-item>
+            </mat-list>
+
+            <mat-list *ngIf="votingState==2 && !isOwner()">
+                <br />
+                <mat-list-item>
+                    <div class="label">Waiting voting session start</div>
+                </mat-list-item>
+            </mat-list>
+
+            <!--session voting starting-->
+            <mat-list *ngIf="votingState==3 && isOwner()">
+                <br />
+                <mat-list-item>
+                    <button mat-stroked-button color="primary" (click)="stopVotingSession()"> Stop voting session</button>
+                </mat-list-item>
+            </mat-list>
+
+            <mat-list *ngIf="votingState==3 && !isOwner()">
+                <br />
+                <mat-list-item>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Proposal</mat-label>
+                        <select matNativeControl [(ngModel)]="selectedProposalId" name="selectedProposal">
+                          <option value="" selected></option>
+                          <option *ngFor="let proposal of proposalList" [value]="proposal.id">
+                            {{proposal.value}}
+                          </option>
+                        </select>
+                      </mat-form-field>
+                      &nbsp;
+                    <button mat-stroked-button color="primary" (click)="voting()">Voting</button>
+                </mat-list-item>
+            </mat-list>
+            <!--Session voting ending-->
+            <mat-list *ngIf="votingState==4 && isOwner()">
+                <br />
+                <mat-list-item *ngIf="winnerProposal==''">
+                    <button mat-stroked-button color="primary" (click)="computeResultVoting()"> Computing result </button>
+                </mat-list-item>
+                <mat-list-item *ngIf="winnerProposal!=''">
+                    <div class="label">Winner proposal is {{winnerProposal}}</div>
+                </mat-list-item>
+            </mat-list>
+            <mat-list *ngIf="votingState==4 && !isOwner()">
+                <br />
+                <mat-list-item *ngIf="winnerProposal==''">
+                    <div class="label">Waiting for admin compute winner proposal</div>
+                </mat-list-item>
+                <mat-list-item *ngIf="winnerProposal!=''">
+                    <div class="label">Winner proposal is {{winnerProposal}}</div>
+                </mat-list-item>
+            </mat-list>
+
         </mat-card>
     </mat-grid-tile>
     <mat-grid-tile> &nbsp;</mat-grid-tile>

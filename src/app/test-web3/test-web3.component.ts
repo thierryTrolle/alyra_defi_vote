@@ -23,7 +23,7 @@ export class TestWeb3Component implements OnInit {
    */
   public accountAddress: string;
 
-  public balance:number = 0;
+  public balance: number = 0;
 
   constructor(
     private web3Service: Web3Service,
@@ -31,7 +31,18 @@ export class TestWeb3Component implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.watchAccount();
+    console.log("TestWeb3Component ngOnInit()");
+  }
+
+  watchAccountEventChange() {
+    this.web3Service.getEventAccountChange().subscribe(
+      changeAccountEvent => {
+        console.log(changeAccountEvent);
+      },
+      error => {
+        console.log(error);
+      }
+    )
   }
 
   watchAccount() {
@@ -49,7 +60,7 @@ export class TestWeb3Component implements OnInit {
   private refreshBalance(address: string) {
     this.web3Service.getBalance(this.accountAddress).subscribe(
       result => {
-        this.balance = result/1000000000000000000;
+        this.balance = result / 1000000000000000000;
       },
       error => {
         console.log(error);

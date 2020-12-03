@@ -19,9 +19,8 @@ export class Web3Service {
   public accountsObservable = new Subject<string[]>();
 
   constructor() {
-    window.addEventListener('load', (event) => {
-      this.bootstrapWeb3();
-    });
+    //now strating on app.module.js for start before ngInit of component
+    // this.bootstrapWeb3();
   }
 
   public getWeb3():any{
@@ -29,6 +28,7 @@ export class Web3Service {
   }
 
   public bootstrapWeb3() {
+    console.log("bootstrapWeb3()");
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof window.ethereum !== 'undefined') {
       // Use Mist/MetaMask's provider
@@ -45,6 +45,15 @@ export class Web3Service {
 
     setInterval(() => this.refreshAccounts(), 500);
   }
+
+  public getEventAccountChange():Observable<any>{
+    if (!this.web3) {
+      // setTimeout(this.getEventAccountChange(), 100);
+      return this.getEventAccountChange();
+    }
+    return from(window.ethereum.on('accountsChanged'));
+  }
+
 
   /**
    * Transform artifact json to an usable instance
@@ -92,7 +101,7 @@ export class Web3Service {
    */
   private async refreshAccounts() {
     const accs = await this.web3.eth.getAccounts();
-    console.log('Refreshing accounts');
+    // console.log('Refreshing accounts');
 
     // Get the initial account balance so it can be displayed.
     if (accs.length === 0) {

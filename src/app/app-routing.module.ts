@@ -5,7 +5,7 @@ import { TestWeb3Component } from './test-web3/test-web3.component';
 
 
 const routes: Routes = [
-  { path: '', redirectTo: '/test-web3', pathMatch: 'full' },//redirection par defaut
+  { path: '', redirectTo: '/test-admin', pathMatch: 'full' },//redirection par defaut
   { path: 'test-web3', component: TestWeb3Component },
   { path: 'admin', component: AdminComponent },
 ];

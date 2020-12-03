@@ -43,10 +43,10 @@ contract Voting is Ownable{
     //map idPropostion => Proposition  
     mapping(uint=>Proposal) _proposalList;
     
-    
     //Liaison entre propositon et idDeProposition
-    mapping(uint=>string) _proposalIdToDescription;
-    uint idCounter=1;
+    mapping(uint=>string) public _proposalIdToDescription;
+
+    uint public idCounter=1;
     
     event VoterRegistered(address voterAddress);
     event ProposalsRegistrationStarted();
@@ -59,7 +59,7 @@ contract Voting is Ownable{
     event WorkflowStatusChange(WorkflowStatus previousStatus, WorkflowStatus newStatus);
     
     //la proposition final
-    string _finalProposition="default";
+    string _finalProposition;
     
     
     /**
@@ -151,7 +151,6 @@ contract Voting is Ownable{
         require(_workflowState==WorkflowStatus.VotingSessionEnded,"workflowState must be VotingSessionEnded");
         string memory finalProposition="";
         uint max=0;
-        
         
         //set de la proposition qui a le plus de vote
         for(uint i=1; i<idCounter; i++){
