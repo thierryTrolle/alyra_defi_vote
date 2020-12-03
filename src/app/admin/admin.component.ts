@@ -36,6 +36,8 @@ export class AdminComponent implements OnInit {
 
   public votingState: number;
 
+  public votingLabel:string;
+
   public isWhiteListed = false;
 
   /**
@@ -83,11 +85,20 @@ export class AdminComponent implements OnInit {
       state => {
         // console.log("state" + state);
         this.votingState = state;
-        if (state == 3 && this.proposalList.length == 0) {
+        if(state==0){
+          this.votingLabel="Registering Voters";
+        }else if(state==1){
+          this.votingLabel="Proposals Registration Started";
+        }else if(state==2){
+          this.votingLabel="Proposals Registration Ended";
+        }else if (state == 3 && this.proposalList.length == 0) {
+          this.votingLabel="Voting Session Started";
           this.loadProposal();
-        }
-        if (state == 4 && this.proposalList.length == 0) {
+        }else if (state == 4 && this.proposalList.length == 0) {
+          this.votingLabel="Voting Session Ended";
           this.loadWinnerProposal();
+        }else if(state == 5){
+          this.votingLabel="Votes Tallied";
         }
       }, error => {
         console.log(error);
@@ -212,6 +223,7 @@ export class AdminComponent implements OnInit {
         result => {
           console.log(result);
           alert("Voting Succes, while voting session is not close, you can change your choice");
+          this.selectedProposalId="";
         },
         error => console.log(error)
       )

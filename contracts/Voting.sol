@@ -66,6 +66,7 @@ contract Voting is Ownable{
      * @dev Allow adresse to participate.
      * */
     function addIntoWhiteList(address _adresse, bool isAuthorised ) public onlyOwner{
+        require(_workflowState==WorkflowStatus.RegisteringVoters,"workflowState must be RegisteringVoters");
         _whiteList[_adresse]=Voter(isAuthorised,false,0);
         emit VoterRegistered(_adresse);
     }
@@ -119,6 +120,7 @@ contract Voting is Ownable{
      * @dev allow account to vote 
      * */
     function vote(uint _idProposition) public{
+        require(_workflowState==WorkflowStatus.VotingSessionStarted, "status must be VotingSessionStarted");
         require(_whiteList[msg.sender].isRegistered,"You are not allowed to vote");
         require(!_whiteList[msg.sender].hasVoted,"you already voted");
         
