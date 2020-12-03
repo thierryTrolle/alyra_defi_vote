@@ -1,27 +1,52 @@
-# VotingAngular
+[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.20.
 
-## Development server
+# Voting System on Ethereum
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+This project is a training challenge: Propose a voting system on the Ethereum blockchain.
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## prerequisite
 
-## Build
+you need to install the following components:
+command line is for debian system :)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+* [node.js](https://nodejs.org/en/) - evented I/O for the backend and npm management package.
+```sh
+sudo apt-get install nodejs npm
+```
+* [ganache](https://www.trufflesuite.com/ganache) - a personal Ethereum blockchain for test.
+```sh
+sorry you must download app !
+```
+* [angular](https://angular.io/) - frontend js framework.
+```sh
+$ sudo install -g @angular/cli@8.3 @angular/core@8.3
+```
 
-## Running unit tests
+- [metamask](https://metamask.io/download.html) - wallet ethereum.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Installation for dev environnement
 
-## Running end-to-end tests
+* Start ganache with port 7545 and network id 5777
+* Notice owner address in src/environments/environnements.ts file, owner is the first address account of ganache.
+* Install dependency
+```sh
+npm install
+```
+* Compile and deploy contracts
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+```sh
+$ truffle migrate --reset
+```
+* start debug server with angular
+```sh
+$ ng serve
+```
+* Open your browser at [http://localhost:4200](http://localhost:4200)
 
-## Further help
+## manual 
+soon 
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
