@@ -46,7 +46,7 @@ $ ng serve
 * Open your browser at [http://localhost:4200](http://localhost:4200)
 
 ## manual 
-soon 
+[PDF Manual](https://github.com/thierryTrolle/alyra_defi_vote/blob/master/manual/manual.pdf)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
