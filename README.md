@@ -39,6 +39,7 @@ npm install
 ```sh
 $ truffle migrate --reset
 ```
+* Connect metamask to ganache network 
 * start debug server with angular
 ```sh
 $ ng serve
