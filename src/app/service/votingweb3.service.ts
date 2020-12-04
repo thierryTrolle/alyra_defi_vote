@@ -40,7 +40,7 @@ export class Votingweb3Service {
             console.log("Votingweb3Service ready !");
 
             //FIXME catch with event websocket
-            setInterval(() => this.refreshVotingState(), 600);
+            // setInterval(() => this.refreshVotingState(), 600);
           }
         )
       }
