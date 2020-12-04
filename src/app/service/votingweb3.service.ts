@@ -1,22 +1,28 @@
-import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 import { Injectable } from '@angular/core';
-import { stringify } from 'querystring';
-import { concat, from, Observable, of } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
 import { Web3Service } from './web3.service';
 
 declare let require: any;
 const votingArtifact = require('../../../build/contracts/Voting.json');
 
+
+/**
+ * Service for smartContract Voting.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class Votingweb3Service {
 
+  /**
+   * Instance of service
+   */
   private votingInstance: any;
 
-  private votingState: Observable<any>;
-
+  /**
+   * Launch by app.module.js to start before component
+   * @param web3Service web3 service
+   */
   constructor(private web3Service: Web3Service) {
   }
 
@@ -24,7 +30,6 @@ export class Votingweb3Service {
    * Launching by app.module.ts
    */
   public bootstrap() {
-    console.log('web3 state: ' + this.web3Service);
     this.web3Service.artifactsToContract(votingArtifact).then(
       abstract => {
         abstract.deployed().then(
@@ -41,45 +46,76 @@ export class Votingweb3Service {
       }
     );
   }
+  // deprecated
+  // private refreshVotingState() {
+  //   if (!this.votingInstance) {
+  //     console.log("this.votingInstance doesn't loaded !");
+  //     setTimeout(() => { console.log("Waiting refreshVotingState()"); }, 100);
+  //     return this.refreshVotingState();
+  //   }
+  //   return from(this.votingInstance._workflowState.call());
+  // }
 
-  private refreshVotingState() {
-    if (!this.votingInstance) {
-      console.log("this.votingInstance doesn't loaded !");
-      setTimeout(() => { console.log("Waiting refreshVotingState()"); }, 100);
-      return this.refreshVotingState();
-    }
-    this.votingState = from(this.votingInstance._workflowState.call());
-    // console.log("refresh voting state");
-  }
-
+  /**
+   * 
+   * @param address Add address to whiteList
+   * @param addressUser address to add
+   */
   addToWhiteList(address, addressUser): Observable<any> {
     return from(this.votingInstance.addIntoWhiteList(address, true, { from: addressUser }));
   }
 
+  /**
+   * Voters add proposal
+   * @param proposal string proposal
+   * @param user : address who add
+   */
   addProposal(proposal, user) {
     return from(this.votingInstance.addProposition(proposal, { from: user }));
   }
 
+  /**
+   * Owner whitelist address
+   * @param address address who whitelist
+   */
   isWhiteListed(address): Observable<any> {
     return from(this.votingInstance._whiteList.call(address));
   }
 
+  /**
+   * Get state workflow voting.
+   */
   getWorkflowState(): Observable<any> {
     return from(this.votingInstance._workflowState.call());
   }
 
+  /**
+   * Owner start session.
+   * @param addressUser address who start
+   */
   startPropositionSession(addressUser) {
     return from(this.votingInstance.startPropositionSession({ from: addressUser }));
   }
 
+  /**
+   * Owner stop session.
+   * @param addressUser address who stop
+   */
   stopProposalSession(addressUser) {
     return from(this.votingInstance.finishPropositionSession({ from: addressUser }));
   }
 
+  /**
+   * Owner start voting session.
+   * @param addressUser address who start
+   */
   startVotingSession(addressUser) {
     return from(this.votingInstance.startVotingSession({ from: addressUser }));
   }
 
+  /**
+   * Build proposal list to show
+   */
   private async getProposalListAsync():Promise<string[]> {
     
     let proposalList:string[]=new Array;
@@ -93,22 +129,42 @@ export class Votingweb3Service {
     return proposalList;
   }
 
+  /**
+   * Get ordonated list of proposal 
+   * index(idProposal) begin by 1
+   */
   public getProposalList():Observable<string[]>{
     return from(this.getProposalListAsync());
   } 
 
+  /**
+   * User voting 
+   * @param idProposal : id proposal from get Proposal
+   * @param addressVoter : address who voting
+   */
   public voting(idProposal,addressVoter):Observable<any>{
     return from(this.votingInstance.vote(idProposal,{ from: addressVoter }));
   }
 
+  /**
+   * Owenr stop session voting
+   * @param addressUser address who stop
+   */
   stopVotingSession(addressUser) {
     return from(this.votingInstance.finishVote({ from: addressUser }));
   }
 
+  /**
+   * compute result vote
+   * @param addressUser address who wompute
+   */
   computeResultVoting(addressUser):Observable<any>{
     return from(this.votingInstance.calculateMostVotedProposition({ from: addressUser }));
   }
 
+  /**
+   * get Result
+   */
   getWinnerProposal():Observable<any>{
     return from(this.votingInstance.getWinnerProposition());
   }

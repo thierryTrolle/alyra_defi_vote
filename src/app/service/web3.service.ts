@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, from } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { from, Observable, Subject } from 'rxjs';
 
 declare let require: any;
 const Web3 = require('web3');
@@ -12,21 +11,40 @@ declare let window: any;
   providedIn: 'root'
 })
 export class Web3Service {
+  /**
+   * Web3 the famous !
+   */
   private web3: any;
+
+  /**
+   * Last accounts loaded
+   */
   private accounts: string[];
+
+  /**
+   *if ready account metamask are loaded 
+   */
   public ready = false;
 
+  /**
+   * Account to observe in component controler.
+   */
   public accountsObservable = new Subject<string[]>();
 
   constructor() {
-    //now strating on app.module.js for start before ngInit of component
-    // this.bootstrapWeb3();
+    //now strarting on app.module.js for start before ngInit of components
   }
 
+  /**
+   * TO have web3 to another services.
+   */
   public getWeb3():any{
     return this.web3;
   }
 
+  /**
+   * Starting by app.module.js, must start before component  
+   */
   public bootstrapWeb3() {
     console.log("bootstrapWeb3()");
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
@@ -42,10 +60,12 @@ export class Web3Service {
       // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
       this.web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
     }
-
     setInterval(() => this.refreshAccounts(), 500);
   }
 
+  /**
+   * Obeserve account change
+   */
   public getEventAccountChange():Observable<any>{
     if (!this.web3) {
       // setTimeout(this.getEventAccountChange(), 100);
@@ -72,6 +92,10 @@ export class Web3Service {
     return contractAbstraction;
   }
 
+  /**
+   * Check valid Ethereum address
+   * @param address Ethereum address
+   */
   public isAddress(address: string): boolean {
     return this.web3.isAddress(address);
   }
@@ -97,7 +121,7 @@ export class Web3Service {
   }
 
   /**
-   * refresh les comptes lors de changments metamask
+   * refresh account when user change it on metamask
    */
   private async refreshAccounts() {
     const accs = await this.web3.eth.getAccounts();

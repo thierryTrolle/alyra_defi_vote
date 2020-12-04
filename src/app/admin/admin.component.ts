@@ -3,7 +3,9 @@ import { environment } from '../../environments/environment';
 import { Votingweb3Service } from '../service/votingweb3.service';
 import { Web3Service } from '../service/web3.service';
 
-
+/**
+ * For selected input proposal
+ */
 interface Proposal {
   id: number;
   value: string;
@@ -18,7 +20,7 @@ export class AdminComponent implements OnInit {
 
 
   /**
- * Liste des comptes 
+ * Account list, refresh all time
  */
   public accounts: string[];
 
@@ -28,16 +30,28 @@ export class AdminComponent implements OnInit {
   ownerAddress = environment.ownerAddress;
 
   /**
-   * le compte
+   * The current account used
    */
   public accountAddress: string;
 
+  /**
+   * The current account balance 
+   */
   public balance: number = 0;
 
+  /**
+   * State of voting system refresh
+   */
   public votingState: number;
 
+  /**
+   * The label showing on front 
+   */
   public votingLabel:string;
 
+  /**
+   * TO know if voter is whitelisted
+   */
   public isWhiteListed = false;
 
   /**
@@ -46,28 +60,41 @@ export class AdminComponent implements OnInit {
   public proposalList: Proposal[] = new Array;
 
   /**
-   * Selected value in selected input 
+   * Selected value in selected porposal input 
    */
   selectedProposalId: string;
   selectedProposal: string;
 
   /**
-   * Address to whitelist
+   * Address to whitelist(input)
    */
   public address;
 
   /**
-   * proposal field
+   * proposal field(input)
    */
   public proposal;
 
+  /**
+   * Once calculated 
+   */
   public winnerProposal;
 
+  /**
+   * 
+   * @param web3Service : Web3 for all operation account and web3
+   * @param votingweb3Service : Voting system service.
+   */
   constructor(
     private web3Service: Web3Service,
     private votingweb3Service: Votingweb3Service
   ) { }
 
+  /**
+   * On init 
+   * => start refresh account 
+   * => start refresh state of voting System.
+   */
   ngOnInit() {
     console.log("ngOnInit");
     this.watchAccount();
@@ -75,12 +102,18 @@ export class AdminComponent implements OnInit {
     setInterval(() => this.update(), 600);
   }
 
+  /**
+   * To know if current user is Owner
+   */
   isOwner() {
     return this.ownerAddress == this.accountAddress;
   }
 
+  /**
+   * Update state of voting System
+   */
   update() {
-    //maj etat du vote 
+    //update state of votingSystem
     this.votingweb3Service.getWorkflowState().subscribe(
       state => {
         // console.log("state" + state);
@@ -106,7 +139,7 @@ export class AdminComponent implements OnInit {
     )
 
 
-    //maj isWhite Listed
+    //update isWhiteListed
     this.votingweb3Service.isWhiteListed(this.accountAddress).subscribe(
       result => {
         // console.log(result.isRegistered);
@@ -116,6 +149,9 @@ export class AdminComponent implements OnInit {
     );
   }
 
+  /**
+   * To load winner proposal
+   */
   loadWinnerProposal(){
     this.votingweb3Service.getWinnerProposal().subscribe(
       result=>this.winnerProposal=result
@@ -141,6 +177,9 @@ export class AdminComponent implements OnInit {
     )
   }
 
+  /**
+   * Refresh account parameters
+   */
   watchAccount() {
     this.web3Service.accountsObservable.subscribe((accounts) => {
       this.accounts = accounts;
@@ -149,6 +188,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  /**
+   * Voters sending proposal
+   */
   sendProposal() {
     this.votingweb3Service.addProposal(this.proposal, this.accountAddress).subscribe(
       result => {
@@ -161,7 +203,9 @@ export class AdminComponent implements OnInit {
     )
   }
 
-
+  /**
+   * Owner smartContract add address to whitelist
+   */
   addWhiteAddress() {
     if (!this.address || this.address == "") {
       alert("address non set");
@@ -177,6 +221,9 @@ export class AdminComponent implements OnInit {
     )
   }
 
+  /**
+   * Owner start proposal session 
+   */
   launchProposalSession() {
     console.log("test");
     this.votingweb3Service.startPropositionSession(this.accountAddress).subscribe(
@@ -190,6 +237,9 @@ export class AdminComponent implements OnInit {
     )
   }
 
+  /**
+   * Owner stop proposal session
+   */
   stopProposalSession() {
     this.votingweb3Service.stopProposalSession(this.accountAddress).subscribe(
       result => {
@@ -202,6 +252,9 @@ export class AdminComponent implements OnInit {
     )
   }
 
+  /**
+   * Owner start voting session
+   */
   startVotingSession() {
     this.votingweb3Service.startVotingSession(this.accountAddress).subscribe(
       result => {
@@ -214,6 +267,9 @@ export class AdminComponent implements OnInit {
     )
   }
 
+  /**
+   * Voters voting for proposal
+   */
   voting() {
     // alert(this.selectedProposalId+this.selectedProposal);
     if (this.selectedProposalId == "") {
@@ -230,6 +286,9 @@ export class AdminComponent implements OnInit {
     }
   }
 
+  /**
+   * Owner stop voting session
+   */
   stopVotingSession() {
     this.votingweb3Service.stopVotingSession(this.accountAddress).subscribe(
       result => {
@@ -242,6 +301,9 @@ export class AdminComponent implements OnInit {
     )
   }
 
+  /**
+   * Calculate winner proposal
+   */
   computeResultVoting() {
     this.votingweb3Service.computeResultVoting(this.accountAddress).subscribe(
       result => {
@@ -253,7 +315,7 @@ export class AdminComponent implements OnInit {
   }
 
   /**
-   * 
+   * Refresh balance in Ether
    * @param address refresh balance of customer.
    */
   private refreshBalance(address: string) {
